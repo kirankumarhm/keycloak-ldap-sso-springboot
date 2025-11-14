@@ -478,6 +478,7 @@ In Keycloak Admin Console:
 Go to User Federation → ldap → Mappers → Create:
 
 Mapper Configuration:
+```
 Name: roles-mapper
 Mapper Type: group-ldap-mapper
 LDAP Groups DN: ou=roles,dc=example,dc=org
@@ -492,7 +493,7 @@ Mapped Group Attributes:
 User Groups Retrieve Strategy: LOAD_GROUPS_BY_MEMBER_ATTRIBUTE
 Groups Path: /
 Drop non-existing groups during sync: Off
-
+```
 **After Creating**:
 Click Actions → "Sync LDAP groups to Keycloak" 
 
