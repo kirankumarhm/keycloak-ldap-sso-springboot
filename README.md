@@ -450,7 +450,7 @@ networks:
 - Use `phpLDAPadmin` to verify user entries and attributes.
 - Check Keycloak logs for detailed error messages.
 
-## Create Role Mapper (Not Group Mapper)
+## Create Role Mapper 
 In Keycloak Admin Console → User Federation → ldap → Mappers → Create:
 ```
 Name: roles-mapper
@@ -471,6 +471,36 @@ Go to Realm Settings → Roles to see synced roles
 Check users to see assigned roles
 
 This will sync LDAP groups as Keycloak roles.
+
+## Create Group Mapper (Optional)
+In Keycloak Admin Console:
+
+Go to User Federation → ldap → Mappers → Create:
+
+Mapper Configuration:
+Name: roles-mapper
+Mapper Type: group-ldap-mapper
+LDAP Groups DN: ou=roles,dc=example,dc=org
+Group Name LDAP Attribute: cn
+Group Object Classes: groupOfNames
+Membership LDAP Attribute: member
+Membership Attribute Type: DN
+Membership User LDAP Attribute: uid
+Groups Retrieve Strategy: LOAD_GROUPS_BY_MEMBER_ATTRIBUTE
+Member-Of LDAP Attribute: memberOf
+Mapped Group Attributes: 
+User Groups Retrieve Strategy: LOAD_GROUPS_BY_MEMBER_ATTRIBUTE
+Groups Path: /
+Drop non-existing groups during sync: Off
+
+**After Creating**:
+Click Actions → "Sync LDAP groups to Keycloak" 
+
+Go to Groups to see synced groups
+
+Check users to see assigned groups
+
+This will sync LDAP groups as Keycloak groups.
 
 
 ## 📎 References
