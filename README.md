@@ -316,6 +316,145 @@ member: uid=sagar,ou=people,dc=example,dc=org
 ```
 
 
+`docker-compose.yml`
+
+```docker
+name: openldap
+services:
+  openldap:
+    image: osixia/openldap:latest
+    container_name: openldap
+    hostname: openldap
+    ports: 
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./data/certificates:/container/service/slapd/assets/certs
+      - ./data/slapd/database:/var/lib/ldap
+      - ./data/slapd/config:/etc/ldap/slapd.d
+      # - ./ldifs/10-bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/10-bootstrap.ldif
+    environment: 
+      - LDAP_ORGANISATION=example
+      - LDAP_DOMAIN=example.org
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=admin_pass
+      - LDAP_CONFIG_PASSWORD=config_pass
+      - "LDAP_BASE_DN=dc=example,dc=org"
+      - LDAP_TLS_CRT_FILENAME=server.crt
+      - LDAP_TLS_KEY_FILENAME=server.key
+      - LDAP_TLS_CA_CRT_FILENAME=example.org.ca.crt
+      - LDAP_READONLY_USER=true
+      - LDAP_READONLY_USER_USERNAME=user-ro
+      - LDAP_READONLY_USER_PASSWORD=ro_pass
+    networks:
+      - openldap
+    depends_on:
+      - postgres
+      - keycloak
+    restart: unless-stopped
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: phpldapadmin
+    hostname: phpldapadmin
+    ports: 
+      - "80:80"
+    environment: 
+      - PHPLDAPADMIN_LDAP_HOSTS=openldap
+      - PHPLDAPADMIN_HTTPS=false
+    depends_on:
+      - openldap
+    networks:
+      - openldap
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: keycloakdb
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    ports:
+      - 54321:5432
+    networks:
+      - openldap
+    restart: unless-stopped
+
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:24.0.2
+    ports:
+      - 8080:8080
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HEALTH_ENABLED: true
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloakdb
+      KC_DB_USERNAME: username
+      KC_DB_PASSWORD: password
+    depends_on:
+      - postgres
+    networks:
+      - openldap
+    command:
+      - "start"
+    restart: unless-stopped
+
+networks:
+  openldap:
+    driver: bridge
+```
+
+## 🔐 Keycloak LDAP Configuration
+
+### General Options
+- **UI Display Name**: `ldap`
+- **Vendor**: `Other`
+
+### Connection and Authentication
+- **Connection URL**: `ldap://openldap:389`
+- **Enable StartTLS**: `Off`
+- **Bind Type**: `simple`
+- **Bind DN**: `cn=admin,dc=example,dc=org`
+- **Bind Credentials**: `admin_pass`
+
+### LDAP Searching and Updating
+- **Edit Mode**: `READ_ONLY`
+- **Users DN**: `ou=people,dc=example,dc=org`
+- **Search Scope**: `Subtree`
+- **Username LDAP Attribute**: `uid`
+- **RDN LDAP Attribute**: `uid`
+- **UUID LDAP Attribute**: `entryUUID`
+- **User Object Classes**: `inetOrgPerson, organizationalPerson`
+- **User LDAP Filter**: `(objectClass=inetOrgPerson)`
+
+### Synchronization Settings
+- **Import Users**: `On`
+- **Sync Registrations**: `On`
+- **Periodic Full Sync**: `On`
+- **Full Sync Period**: `-1`
+- **Periodic Changed Users Sync**: `On`
+- **Changed Users Sync Period**: `-1`
+
+## ✅ Troubleshooting Tips
+- Ensure `Users DN` matches actual LDAP structure.
+- Use `phpLDAPadmin` to verify user entries and attributes.
+- Check Keycloak logs for detailed error messages.
+
+## 📎 References
+- [OpenLDAP Docker Setup](https://dev.to/alibenromdhan/how-to-set-up-and-configure-openldap-in-a-docker-container-with-phpldapadmin-1ido)
+
+
+
 ### Create Spring boot application
 
 ```xml
@@ -1047,102 +1186,6 @@ spring.profiles.active=dev
 
 
 
-`docker-compose.yml`
-
-```docker
-name: openldap
-services:
-  openldap:
-    image: osixia/openldap:latest
-    container_name: openldap
-    hostname: openldap
-    ports: 
-      - "389:389"
-      - "636:636"
-    volumes:
-      - ./data/certificates:/container/service/slapd/assets/certs
-      - ./data/slapd/database:/var/lib/ldap
-      - ./data/slapd/config:/etc/ldap/slapd.d
-      # - ./ldifs/10-bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/10-bootstrap.ldif
-    environment: 
-      - LDAP_ORGANISATION=example
-      - LDAP_DOMAIN=example.org
-      - LDAP_ADMIN_USERNAME=admin
-      - LDAP_ADMIN_PASSWORD=admin_pass
-      - LDAP_CONFIG_PASSWORD=config_pass
-      - "LDAP_BASE_DN=dc=example,dc=org"
-      - LDAP_TLS_CRT_FILENAME=server.crt
-      - LDAP_TLS_KEY_FILENAME=server.key
-      - LDAP_TLS_CA_CRT_FILENAME=example.org.ca.crt
-      - LDAP_READONLY_USER=true
-      - LDAP_READONLY_USER_USERNAME=user-ro
-      - LDAP_READONLY_USER_PASSWORD=ro_pass
-    networks:
-      - openldap
-    depends_on:
-      - postgres
-      - keycloak
-    restart: unless-stopped
-
-  phpldapadmin:
-    image: osixia/phpldapadmin:latest
-    container_name: phpldapadmin
-    hostname: phpldapadmin
-    ports: 
-      - "80:80"
-    environment: 
-      - PHPLDAPADMIN_LDAP_HOSTS=openldap
-      - PHPLDAPADMIN_HTTPS=false
-    depends_on:
-      - openldap
-    networks:
-      - openldap
-
-  postgres:
-    container_name: postgres
-    image: postgres
-    environment:
-      POSTGRES_USER: username
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: keycloakdb
-    volumes:
-      - ./postgres:/var/lib/postgresql/data
-    ports:
-      - 54321:5432
-    networks:
-      - openldap
-    restart: unless-stopped
-
-  keycloak:
-    container_name: keycloak
-    image: quay.io/keycloak/keycloak:24.0.2
-    ports:
-      - 8080:8080
-    environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_HOSTNAME: localhost
-      KC_HOSTNAME_PORT: 8080
-      KC_HOSTNAME_STRICT_BACKCHANNEL: false
-
-      KC_HTTP_ENABLED: true
-      KC_HOSTNAME_STRICT_HTTPS: false
-      KC_HEALTH_ENABLED: true
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloakdb
-      KC_DB_USERNAME: username
-      KC_DB_PASSWORD: password
-    depends_on:
-      - postgres
-    networks:
-      - openldap
-    command:
-      - "start"
-    restart: unless-stopped
-
-networks:
-  openldap:
-    driver: bridge
 
 # https://dev.to/alibenromdhan/how-to-set-up-and-configure-openldap-in-a-docker-container-with-phpldapadmin-1ido
 
