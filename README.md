@@ -450,6 +450,29 @@ networks:
 - Use `phpLDAPadmin` to verify user entries and attributes.
 - Check Keycloak logs for detailed error messages.
 
+## Create Role Mapper (Not Group Mapper)
+In Keycloak Admin Console → User Federation → ldap → Mappers → Create:
+```
+Name: roles-mapper
+Mapper Type: role-ldap-mapper
+LDAP Roles DN: ou=roles,dc=example,dc=org
+Role Name LDAP Attribute: cn
+Role Object Classes: groupOfNames
+Membership LDAP Attribute: member
+Membership Attribute Type: DN
+Use Realm Roles Mapping: On
+Client ID: (leave empty for realm roles)
+```
+**After Creating**:
+Click Actions → Sync LDAP roles to Keycloak
+
+Go to Realm Settings → Roles to see synced roles
+
+Check users to see assigned roles
+
+This will sync LDAP groups as Keycloak roles.
+
+
 ## 📎 References
 - [OpenLDAP Docker Setup](https://dev.to/alibenromdhan/how-to-set-up-and-configure-openldap-in-a-docker-container-with-phpldapadmin-1ido)
 
