@@ -1187,11 +1187,11 @@ spring.profiles.active=dev
 
 
 
-# https://dev.to/alibenromdhan/how-to-set-up-and-configure-openldap-in-a-docker-container-with-phpldapadmin-1ido
+### https://dev.to/alibenromdhan/how-to-set-up-and-configure-openldap-in-a-docker-container-with-phpldapadmin-1ido
 
-# http://localhost
-# To log in, enter cn=admin,dc=example,dc=org as the username and admin_pass as the password.
-```
+### http://localhost
+### To log in, enter cn=admin,dc=example,dc=org as the username and admin_pass as the password.
+
 
 #### References:
 https://github.com/dive-into-dev/springboot-keycloakauth  
