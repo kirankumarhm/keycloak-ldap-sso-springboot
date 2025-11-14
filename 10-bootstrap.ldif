@@ -1,0 +1,154 @@
+# Organizational Structure
+dn: ou=people,dc=example,dc=org
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=groups,dc=example,dc=org
+objectClass: organizationalUnit
+ou: groups
+
+dn: ou=engineering,ou=people,dc=example,dc=org
+objectClass: organizationalUnit
+ou: engineering
+
+dn: ou=sales,ou=people,dc=example,dc=org
+objectClass: organizationalUnit
+ou: sales
+
+# User Accounts
+# Engineer - Jane Doe
+dn: uid=jdoe,ou=engineering,ou=people,dc=example,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: jdoe
+givenName: Jane
+sn: Doe
+cn: Jane Doe
+mail: jdoe@example.org
+userPassword:: e1NTSEF9V09zOEp2aGFWNUZlWFFXSDJraG81aGF5V1JzL2F2QkY=  # Password: adminpass
+title: Senior Software Engineer
+employeeNumber: 1001
+telephoneNumber: +1 555-123-4567
+uidNumber: 1001
+gidNumber: 500
+homeDirectory: /home/jdoe
+gecos: Jane Doe, Software Engineering, Ext. 4567
+
+# Engineer - Michael Chen
+dn: uid=mchen,ou=engineering,ou=people,dc=example,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: mchen
+givenName: Michael
+sn: Chen
+cn: Michael Chen
+mail: mchen@example.org
+userPassword:: e1NTSEF9V09zOEp2aGFWNUZlWFFXSDJraG81aGF5V1JzL2F2QkY=  # Password: adminpass
+title: Software Engineer
+employeeNumber: 1002
+telephoneNumber: +1 555-234-5678
+uidNumber: 1002
+gidNumber: 500
+homeDirectory: /home/mchen
+gecos: Michael Chen, Software Engineering, Ext. 5678
+
+# Engineer - Emily Johnson
+dn: uid=ejohnson,ou=engineering,ou=people,dc=example,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: ejohnson
+givenName: Emily
+sn: Johnson
+cn: Emily Johnson
+mail: ejohnson@example.org
+userPassword:: e1NTSEF9V09zOEp2aGFWNUZlWFFXSDJraG81aGF5V1JzL2F2QkY=  # Password: adminpass
+title: Software Engineer Intern
+employeeNumber: 1003
+telephoneNumber: +1 555-345-6789
+uidNumber: 1003
+gidNumber: 500
+homeDirectory: /home/ejohnson
+gecos: Emily Johnson, Software Engineering, Ext. 6789
+
+# Sales - Alex Rodriguez
+dn: uid=arodriguez,ou=sales,ou=people,dc=example,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: arodriquez
+givenName: Alex
+sn: Rodriguez
+cn: Alex Rodriguez
+mail: arodriquez@example.org
+userPassword:: e1NTSEF9V09zOEp2aGFWNUZlWFFXSDJraG81aGF5V1JzL2F2QkY=  # Password: adminpass
+title: Regional Sales Manager
+employeeNumber: 2001
+telephoneNumber: +1 555-987-6543
+uidNumber: 2001
+gidNumber: 501
+homeDirectory: /home/arodriguez
+gecos: Alex Rodriguez, Sales, Ext. 7654
+
+# Sales - Sarah Lee
+dn: uid=slee,ou=sales,ou=people,dc=example,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: slee
+givenName: Sarah
+sn: Lee
+cn: Sarah Lee
+mail: slee@example.org
+userPassword:: e1NTSEF9V09zOEp2aGFWNUZlWFFXSDJraG81aGF5V1JzL2F2QkY=  # Password: adminpass
+title: Sales Representative
+employeeNumber: 2002
+telephoneNumber: +1 555-876-5432
+uidNumber: 2002
+gidNumber: 501
+homeDirectory: /home/slee
+gecos: Sarah Lee, Sales, Ext. 5432
+
+# Sales - David Wong
+dn: uid=dwong,ou=sales,ou=people,dc=example,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: dwong
+givenName: David
+sn: Wong
+cn: David Wong
+mail: dwong@example.org
+userPassword:: e1NTSEF9V09zOEp2aGFWNUZlWFFXSDJraG81aGF5V1JzL2F2QkY=  # Password: adminpass
+title: Sales Representative
+employeeNumber: 2003
+telephoneNumber: +1 555-765-4321
+uidNumber: 2003
+gidNumber: 501
+homeDirectory: /home/dwong
+gecos: David Wong, Sales, Ext. 4321
+
+# Groups
+# Engineering team
+dn: cn=engineering-team,ou=groups,dc=example,dc=org
+objectClass: groupOfNames
+cn: engineering-team
+member: uid=jdoe,ou=engineering,ou=people,dc=example,dc=org
+member: uid=mchen,ou=engineering,ou=people,dc=example,dc=org
+member: uid=ejohnson,ou=engineering,ou=people,dc=example,dc=org
+
+# Sales team
+dn: cn=sales-team,ou=groups,dc=example,dc=org
+objectClass: groupOfNames
+cn: sales-team
+member: uid=arodriguez,ou=sales,ou=people,dc=example,dc=org
+member: uid=slee,ou=sales,ou=people,dc=example,dc=org
+member: uid=dwong,ou=sales,ou=people,dc=example,dc=org
+
+# All employees
+dn: cn=all-employees,ou=groups,dc=example,dc=org
+objectClass: groupOfNames
+cn: all-employees
+member: uid=kirankumar,ou=engineering,ou=people,dc=example,dc=org
+member: uid=jdoe,ou=engineering,ou=people,dc=example,dc=org
+member: uid=mchen,ou=engineering,ou=people,dc=example,dc=org
+member: uid=ejohnson,ou=engineering,ou=people,dc=example,dc=org
+member: uid=arodriguez,ou=sales,ou=people,dc=example,dc=org
+member: uid=slee,ou=sales,ou=people,dc=example,dc=org
+member: uid=dwong,ou=sales,ou=people,dc=example,dc=org
